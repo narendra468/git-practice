@@ -1,0 +1,38 @@
+provider "aws" {
+  access_key = "AKIAYPCMSSKW6XYD2HPB"
+  secret_key = "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"
+  region = "us-east-1"
+}
+resource "aws_vpc" "my_vpc" {
+  cidr_block = "10.0.0.0/24"
+  tags = {
+    Name = "my-vpc"
+  }
+}
+resource "aws_subnet" "mysubnet" {
+  cidr_block = "10.0.0.0/27"
+  vpc_id = aws_vpc.my_vpc.id
+  tags = {
+    Name = "mysubnet"
+  }
+}
+resource "aws_instance" "first" {
+  ami = "ami-09e67e426f25ce0d7"
+  instance_type = "t2.micro"
+  tags = {
+    Name = "ec2"
+  }
+}
+data "aws_vpc" "newvpc" {
+  default = true
+}
+resource "aws_subnet" "first_subnet" {
+  cidr_block = "172.31.96.0/20"
+  vpc_id = data.aws_vpc.newvpc.id
+  tags = {
+    Name = "first-subnet"
+  }
+}
+output "output1" {
+  value = aws_subnet.mysubnet.id
+}
